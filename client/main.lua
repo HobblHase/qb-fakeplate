@@ -63,7 +63,7 @@ AddEventHandler('qb-fakeplate:client:checkFakePlate', function(checkFakePlate, c
             SetVehicleNumberPlateText(car, fakePlate)
             TriggerEvent("vehiclekeys:client:SetOwner", fakePlate, false)
             -- adds a Chat msg that the playr knows he have 2 remove the plate be4 parking im using 'refine-mechat' didnt tested it on other chats :(
-                TriggerClientEvent("chat:addMessage", {
+                TriggerEvent('chat:addMessage', {
                     template = '<div style="padding: 0.25vw; margin: 0.1vw; border-radius: 2px; background-color: rgba(254, 1, 3, 0.650); border: 2px solid rgb(254, 1, 3);"> <b>fake-plate</b> | {0} </font></i></b></div>',
                     multiline = true,
                     args = { ' : ' .. Lang:t('remove_be4_park')} })
