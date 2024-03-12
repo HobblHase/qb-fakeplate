@@ -1,17 +1,16 @@
 # qb-fakeplate
-Fake plate Feature for QB-Core Framework :people_holding_hands:
+Fake plate Feature for **QB-Core Framework** :people_holding_hands: WIP
 
-You can make my day happy by giving me some money via:
-**[Paypal](https://www.paypal.com/donate/?hosted_button_id=24QLXKUH3M5FQ)**
-
-Added support for setting default number of characters per player per Rockstar license
+## ToDo
+- Add a way to remove plate without a item
+- Get plates from npc-cars or other players cars to put em on ur car
 
 ## Dependencies
 - [qb-core](https://github.com/qbcore-framework/qb-core)
 - [OxMySQL](https://github.com/overextended/oxmysql)
 
 ## Preview
-[Video-Preview](https://www.youtube.com/watch?v=KuE5HlGW5ZU)
+[Script-Preview](https://www.youtube.com/watch?v=KuE5HlGW5ZU)
 
 ## Features
 - Install a fake plate on the player's vehicle.
@@ -24,14 +23,14 @@ Added support for setting default number of characters per player per Rockstar l
 ### Manual
 - Download the script and put it in the `[qb]` directory.
 - Add the following code to your server.cfg/resouces.cfg
-```
+```cfg
 ensure qb-fakeplate
 ```
-- Add in [qb]/qb-core/shared/items.lua
+- Add in [qb]/qb-core/shared/items.lua - old items.lua
 ```lua
 ['fakeplate'] 					 = {['name'] = 'fakeplate', 		  	  		['label'] = 'Fake Plate',		 		['weight'] = 250, 		['type'] = 'item', 		['image'] = 'fakeplate.png', 			['unique'] = true, 		['useable'] = true, 	['shouldClose'] = true,	   ['combinable'] = nil,   ['description'] = 'With this fake plate, you won\'t be wanted.'},
 ```
-- Add fakeplate.png image in [qb]/qb-inventory/html/images
+- Add fakeplate.png image in [qb]/qb-inventory/html/images (Rightclick -> save as...)
 
 **![image](https://user-images.githubusercontent.com/77104201/207998099-b0d7c628-2d8f-4dbb-9cf3-b297e86c88af.png)**
 

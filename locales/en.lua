@@ -7,7 +7,8 @@ local Translations = {
         ops_something_went_wrong = "Ops, Something went wrong!",
         plate_not_cloned = "The plate is not cloned!",
         fake_plate_broker = "Fake plate broke!",
-        need_tool_kit = "You need a Tool Kit!"
+        need_tool_kit = "You need a Tool Kit!",
+        remove_be4_park = "If you want to park the car, you'll have to remove the fakeplate then!"
 }
 
 Lang = Locale:new({

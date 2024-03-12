@@ -26,7 +26,7 @@ RegisterNetEvent('qb-fakeplate:server:fakePlate', function(carPlate, fakePlate)
     MySQL.Async.execute('UPDATE player_vehicles SET fakeplate = ? WHERE plate = ?', { fakePlate, carPlate })
 end)
 
-QBCore.Functions.CreateUseableItem('screwdriverset', function(source, item)
+QBCore.Functions.CreateUseableItem( Config.PutOnTool , function(source, item)
     local Player = QBCore.Functions.GetPlayer(source)
     if not Player.Functions.GetItemByName(item.name) then return end
     TriggerClientEvent('qb-fakeplate:client:remove', source)

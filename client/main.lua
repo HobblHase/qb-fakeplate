@@ -2,24 +2,39 @@ local QBCore = exports['qb-core']:GetCoreObject()
 
 RegisterNetEvent('qb-fakeplate:client:useFakePlate')
 AddEventHandler('qb-fakeplate:client:useFakePlate', function()
-    local requiredItem = QBCore.Functions.HasItem("screwdriverset")
-    if requiredItem == false then
-        QBCore.Functions.Notify(Lang:t("need_tool_kit"), 'error', 7500)
-    end
-    if requiredItem then
-        local carPlate = {}
-        local ped = PlayerPedId()
-        local pedCoords = GetEntityCoords(ped)
-        local citizenid = QBCore.Functions.GetPlayerData().citizenid
-        local car = GetClosestVehicle(pedCoords.x, pedCoords.y, pedCoords.z, 3.000, 0, 70)
-        if car ~= 0 then
-            SetEntityAsMissionEntity(car, true, true)
-            carPlate = GetVehicleNumberPlateText(car)
-            TriggerServerEvent('qb-fakeplate:server:checkFakePlate', carPlate, citizenid)
-        else
-            QBCore.Functions.Notify(Lang:t("you_are_not_near_the_vehicle"), 'error', 7500)
+    -- if Config.PutOnTool ~= nil then - ToDo
+        local requiredItem = QBCore.Functions.HasItem( Config.PutOnTool )
+        if requiredItem == false then
+            QBCore.Functions.Notify(Lang:t("need_tool_kit"), 'error', 7500)
         end
-    end
+            if requiredItem then
+                local carPlate = {}
+                local ped = PlayerPedId()
+                local pedCoords = GetEntityCoords(ped)
+                local citizenid = QBCore.Functions.GetPlayerData().citizenid
+                local car = GetClosestVehicle(pedCoords.x, pedCoords.y, pedCoords.z, 3.000, 0, 70)
+                if car ~= 0 then
+                    SetEntityAsMissionEntity(car, true, true)
+                    carPlate = GetVehicleNumberPlateText(car)
+                    TriggerServerEvent('qb-fakeplate:server:checkFakePlate', carPlate, citizenid)
+                else
+                    QBCore.Functions.Notify(Lang:t("you_are_not_near_the_vehicle"), 'error', 7500)
+                end
+            end
+   -- else
+        --     local carPlate = {}
+        --     local ped = PlayerPedId()
+        --     local pedCoords = GetEntityCoords(ped)
+        --     local citizenid = QBCore.Functions.GetPlayerData().citizenid
+        --     local car = GetClosestVehicle(pedCoords.x, pedCoords.y, pedCoords.z, 3.000, 0, 70)
+        -- if car ~= 0 then
+        --     SetEntityAsMissionEntity(car, true, true)
+        --     carPlate = GetVehicleNumberPlateText(car)
+        --     TriggerServerEvent('qb-fakeplate:server:checkFakePlate', carPlate, citizenid)
+        -- else
+        --     QBCore.Functions.Notify(Lang:t("you_are_not_near_the_vehicle"), 'error', 7500)
+        -- end
+    -- end
 end)
 
 RegisterNetEvent('qb-fakeplate:client:checkFakePlate')
@@ -47,7 +62,12 @@ AddEventHandler('qb-fakeplate:client:checkFakePlate', function(checkFakePlate, c
             TriggerServerEvent('qb-fakeplate:server:fakePlate', carPlate, fakePlate)
             SetVehicleNumberPlateText(car, fakePlate)
             TriggerEvent("vehiclekeys:client:SetOwner", fakePlate, false)
-            
+            -- adds a Chat msg that the playr knows he have 2 remove the plate be4 parking im using 'refine-mechat' didnt tested it on other chats :(
+                TriggerClientEvent("chat:addMessage", {
+                    template = '<div style="padding: 0.25vw; margin: 0.1vw; border-radius: 2px; background-color: rgba(254, 1, 3, 0.650); border: 2px solid rgb(254, 1, 3);"> <b>fake-plate</b> | {0} </font></i></b></div>',
+                    multiline = true,
+                    args = { ' : ' .. Lang:t('remove_be4_park')} })
+            -- edit your chat msg here
                 QBCore.Functions.Notify(Lang:t("plate_changed"), 'success', 5000)
         end, function()
             QBCore.Functions.Notify(Lang:t("ops_something_went_wrong"), 'error', 5000)
@@ -67,6 +87,7 @@ AddEventHandler('qb-fakeplate:client:remove', function()
         SetEntityAsMissionEntity(car, true, true)
         carPlate = GetVehicleNumberPlateText(car)
         TriggerServerEvent('qb-fakeplate:server:removeFakePlate', carPlate)
+        QBCore.Functions.Notify(Lang:t("plate_removed"), 'success', 5000)
     end
 end)
 
@@ -94,10 +115,16 @@ AddEventHandler('qb-fakeplate:client:checkCarPlate', function(checkCarPlate, car
         }, {}, {}, function()
             StopAnimTask(ped, "anim@amb@clubhouse@tutorial@bkr_tut_ig3@", "machinic_loop_mechandplayer", 1.0)
             SetVehicleNumberPlateText(car, checkCarPlate)
-            if math.random(1, 100) < 20 then
+            if Config.CanBreak == true then 
+                if math.random(1, 100) < Config.BreakChance then
                     QBCore.Functions.Notify(Lang:t("fake_plate_broker"), 'error', 5000)
-            else
+                else
                     QBCore.Functions.Notify(Lang:t("plate_removed"), 'success', 5000)
+                    TriggerServerEvent("qb-fakeplate:server:returnFakePlate", source)
+                    TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["fakeplate"], "add")
+                end
+            else
+                QBCore.Functions.Notify(Lang:t("plate_removed"), 'success', 5000)
                 TriggerServerEvent("qb-fakeplate:server:returnFakePlate", source)
                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["fakeplate"], "add")
             end
@@ -109,7 +136,7 @@ end)
 
 function plateGenerator()
     local lettersNumbers = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
-    local length = 8
+    local length = math.random(6, 8) -- plate min. - max lenght
     local fPlate = ""
     for _ = 1, length do
         fPlate = fPlate .. lettersNumbers[math.random(#lettersNumbers)]
